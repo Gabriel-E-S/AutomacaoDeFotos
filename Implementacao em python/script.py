@@ -1,8 +1,15 @@
 import telebot
 import os
 from datetime import datetime
+from dotenv import  load_dotenv 
 
-CHAVE_API = ""
+load_dotenv()
+
+CHAVE_API = os.getenv("APIKEY_TELEGRAM")
+
+if not CHAVE_API:
+    raise ValueError("A chave da API não foi encontrada nas variáveis de ambiente")
+    
 bot = telebot.TeleBot(CHAVE_API)
 
 PASTA_RAIZ = r"C:\Users\Gabriel\Documents\Faculdade" 

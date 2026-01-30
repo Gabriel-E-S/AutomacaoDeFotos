@@ -70,11 +70,16 @@ def processar_pendencias():
                 caminho_final = os.path.join(PASTA_RAIZ, materia, data_pasta)
                 if not os.path.exists(caminho_final):
                     os.makedirs(caminho_final)
-                
+
+                if mensagem.photo is None:
+                   raise ValueError("O valor da mensagem é nulo") 
                 # Baixa a foto
                 file_id = mensagem.photo[-1].file_id
 
                 file_info = bot.get_file(file_id)
+
+                if file_info.file_path is None:
+                    raise ValueError("O caminho do arquivo dentro das informações é nulo")
 
                 downloaded_file = bot.download_file(file_info.file_path)
                 

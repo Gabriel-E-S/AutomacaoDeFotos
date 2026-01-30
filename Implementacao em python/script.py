@@ -12,8 +12,12 @@ if not CHAVE_API:
     
 bot = telebot.TeleBot(CHAVE_API)
 
-PASTA_RAIZ = r"C:\Users\Gabriel\Documents\Faculdade" 
+_caminho_env = os.getenv("CAMINHOLOCAL")
 
+if _caminho_env is None:
+    raise ValueError("A variável CAMINHOLOCAL não está definida no arquivo .env")
+
+PASTA_RAIZ = _caminho_env
 
 GRADE_HORARIA = {
     0: [{"inicio": "08:00", "fim": "10:00", "materia": "Calculo I"}],
@@ -21,7 +25,7 @@ GRADE_HORARIA = {
 }
 
 def descobrir_materia(timestamp_msg):
-    # Converte o tempo do Telegram (timestamp) para data legível
+    
     data_envio = datetime.fromtimestamp(timestamp_msg)
     
     dia_semana = data_envio.weekday()
@@ -54,25 +58,28 @@ def processar_pendencias():
             mensagem = update.message
             
             try:
-                # 1. Pega a data REAL do envio da mensagem
+                # Pega a data REAL do envio da mensagem
                 timestamp = mensagem.date
                 data_obj = datetime.fromtimestamp(timestamp)
                 data_pasta = data_obj.strftime("%Y-%m-%d")
                 
-                # 2. Descobre a matéria baseada na hora do ENVIO
+                # Descobre a matéria baseada na hora do ENVIO
                 materia = descobrir_materia(timestamp)
                 
-                # 3. Estrutura de pastas
+                # Estrutura de pastas
                 caminho_final = os.path.join(PASTA_RAIZ, materia, data_pasta)
                 if not os.path.exists(caminho_final):
                     os.makedirs(caminho_final)
                 
-                # 4. Baixa a foto
+                # Baixa a foto
                 file_id = mensagem.photo[-1].file_id
+
                 file_info = bot.get_file(file_id)
+
                 downloaded_file = bot.download_file(file_info.file_path)
                 
                 nome_arquivo = f"foto_{data_obj.strftime('%H-%M-%S')}.jpg"
+
                 caminho_completo = os.path.join(caminho_final, nome_arquivo)
                 
                 with open(caminho_completo, 'wb') as new_file:
@@ -83,7 +90,7 @@ def processar_pendencias():
             except Exception as e:
                 print(f"[ERRO] Falha ao processar mensagem: {e}")
 
-    # Limpa a fila do Telegram (confirma que recebeu até o último ID)
+    # Limpa a fila do Telegram 
     if ultimo_update_id > 0:
         bot.get_updates(offset=ultimo_update_id + 1)
         print("Limpeza concluída. Fila do Telegram esvaziada.")

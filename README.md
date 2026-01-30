@@ -88,3 +88,9 @@ python3 scriptDrive.py
 Nota: Na primeira vez (modo Drive), uma janela do navegador abrirá pedindo permissão.
 
 No Telegram: Envie fotos para o seu bot. O terminal mostrará o progresso e os arquivos aparecerão magicamente nas pastas!
+
+***OBS***: Para instalar todas as bibliotecas necessárias para o projeto rode
+
+```bash
+pip install -r requirements.txt
+```
